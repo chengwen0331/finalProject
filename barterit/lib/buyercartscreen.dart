@@ -37,7 +37,8 @@ class _BuyerCartScreenState extends State<BuyerCartScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Your Cart"),
-        actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.clear))],
+        backgroundColor: Colors.amber,
+        //actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.clear))],
       ),
       body: Column(
         children: [
@@ -56,7 +57,8 @@ class _BuyerCartScreenState extends State<BuyerCartScreen> {
                                 width: screenWidth / 3,
                                 fit: BoxFit.cover,
                                 imageUrl:
-                                    "${MyConfig().SERVER}/barterit_application/assets/items/${cartList[index].itemId}.png",
+                                    "${MyConfig().SERVER}/barterit_application/assets/items/${cartList[index].itemId}_1.png",
+                                    //"${MyConfig().SERVER}/barterit_application/assets/items/${widget.useritem.itemId}_1.png",
                                 placeholder: (context, url) =>
                                     const LinearProgressIndicator(),
                                 errorWidget: (context, url, error) =>
@@ -87,7 +89,7 @@ class _BuyerCartScreenState extends State<BuyerCartScreen> {
                                                   ScaffoldMessenger.of(context)
                                                       .showSnackBar(const SnackBar(
                                                           content: Text(
-                                                              "Quantity less than 1")));
+                                                              "Quantity cannot less than 1")));
                                                   //userqty = 1;
                                                   //totalprice = singleprice * userqty;
                                                 } else {
@@ -147,7 +149,10 @@ class _BuyerCartScreenState extends State<BuyerCartScreen> {
                                         ],
                                       ),
                                       Text(
-                                          "RM ${double.parse(cartList[index].cartPrice.toString()).toStringAsFixed(2)}")
+                                          "RM ${double.parse(cartList[index].cartPrice.toString()).toStringAsFixed(2)}",
+                                          style: const TextStyle(
+                                            //fontSize: 16,
+                                            fontWeight: FontWeight.bold),)
                                     ],
                                   ),
                                 ),
@@ -169,7 +174,7 @@ class _BuyerCartScreenState extends State<BuyerCartScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Total Price RM ${totalprice.toStringAsFixed(2)}",
+                      "Total Price: RM ${totalprice.toStringAsFixed(2)}",
                       style: const TextStyle(
                           fontSize: 18, fontWeight: FontWeight.bold),
                     ),
@@ -184,6 +189,9 @@ class _BuyerCartScreenState extends State<BuyerCartScreen> {
                                       )));
                           loadcart();
                         },
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.amber,
+                          ),
                         child: const Text("Check Out"))
                   ],
                 )),

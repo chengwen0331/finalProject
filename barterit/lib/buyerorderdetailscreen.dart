@@ -52,7 +52,7 @@ class _BuyerOrderDetailsScreenState extends State<BuyerOrderDetailsScreen> {
     super.initState();
     loadbuyer();
     loadorderdetails();
-    //selectStatus = widget.order.orderStatus.toString();
+    selectStatus = widget.order.orderStatus.toString();
     /*if (widget.order.orderLat.toString() == "") {
       picuploc = "Not selected";
       _pickupPosition = const CameraPosition(

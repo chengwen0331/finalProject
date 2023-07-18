@@ -20,7 +20,7 @@ class ExploreScreen extends StatefulWidget {
 
 class _ExploreScreenState extends State<ExploreScreen> {
   late List<Widget> tabchildren;
-  String maintitle = "Browse Trades";
+  String maintitle = "Buyer";
   bool isSearchBarVisible = false;
   late double screenHeight, screenWidth;
   late int axiscount = 2;
@@ -58,9 +58,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
   @override
     void initState() {
       super.initState();
-      /*Future.delayed(Duration.zero, () {
-    _loadExploreItems(1);
-  });*/
       _loadExploreItems(1);
       print("Explore");
     }
@@ -100,9 +97,10 @@ class _ExploreScreenState extends State<ExploreScreen> {
             onPressed: showCategory,
             icon: const Icon(Icons.filter_list),
           ),
-          TextButton.icon(
+          /*TextButton.icon(
             icon: const Icon(
               Icons.shopping_cart,
+              color: Colors.black,
             ),
 
             // Your icon here
@@ -121,7 +119,58 @@ class _ExploreScreenState extends State<ExploreScreen> {
                     const SnackBar(content: Text("No item in cart")));
               }
             },
-          ),
+          ),*/
+          TextButton.icon(
+            onPressed: () async {
+              if (cartqty > 0) {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (content) => BuyerCartScreen(
+                      user: widget.user,
+                    ),
+                  ),
+                );
+                _loadExploreItems(1);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("No item in cart")),
+                );
+              }
+            },
+            icon: Stack(
+              children: [
+                const Icon(
+                  Icons.shopping_cart,
+                  color: Colors.black,
+                ),
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: Transform.translate(
+                    offset: const Offset(8, -8),
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: const BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Text(
+                        cartqty.toString(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            label: const Text(''),
+          )
+
         ],
         bottom: isSearchBarVisible
       ? PreferredSize(
@@ -351,11 +400,12 @@ class _ExploreScreenState extends State<ExploreScreen> {
       itemList.clear();
       if (response.statusCode == 200) {
         var jsondata = jsonDecode(response.body);
-        if (jsondata['status'] == "success") {
+        if (jsondata['status'] == "success") {         
           numofpage = int.parse(jsondata['numofpage']);
           numberofresult = int.parse(jsondata['numberofresult']);
           var extractdata = jsondata['data'];
           cartqty = int.parse(jsondata['cartqty'].toString());
+          //cartqty = jsondata['cartqty'] != null ? int.tryParse(jsondata['cartqty'].toString()) ?? 0 : 0;
           extractdata['items'].forEach((v) {
             itemList.add(Item.fromJson(v));
           });

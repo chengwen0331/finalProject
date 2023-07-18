@@ -1,6 +1,8 @@
 
 import 'dart:convert';
+import 'dart:developer';
 
+import 'package:barterit/buyercartscreen.dart';
 import 'package:barterit/model/item.dart';
 import 'package:barterit/model/myconfig.dart';
 import 'package:barterit/model/user.dart';
@@ -24,7 +26,9 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
   final df = DateFormat('dd-MM-yyyy hh:mm a');
   late double screenHeight, screenWidth, cardwitdh;
   final CarouselController carouselController = CarouselController();
+  List<Item> itemList = <Item>[];
   int currenIndex = 0;
+  int cartqty = 0;
   int qty = 0;
   int userqty = 1;
   double totalprice = 0.0;
@@ -33,6 +37,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
   @override
   void initState() {
     super.initState();
+    _loadExploreItems();
     qty = int.parse(widget.useritem.itemQty.toString());
     totalprice = double.parse(widget.useritem.itemPrice.toString());
     singleprice = double.parse(widget.useritem.itemPrice.toString());
@@ -66,16 +71,66 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
             color: Colors.red,
           ),
         ),
-        IconButton(
+        /*IconButton(
           onPressed: () {
             // Handle messenger action
           },
           icon: const Icon(Icons.chat, color: Colors.black,),
-        ),  
+        ), */
+        TextButton.icon(
+            onPressed: () async {
+              if (cartqty > 0) {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (content) => BuyerCartScreen(
+                      user: widget.user,
+                    ),
+                  ),
+                );
+                _loadExploreItems();
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("No item in cart")),
+                );
+              }
+            },
+            icon: Stack(
+              children: [
+                const Icon(
+                  Icons.shopping_cart,
+                  color: Colors.black,
+                ),
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: Transform.translate(
+                    offset: const Offset(8, -8),
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: const BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Text(
+                        cartqty.toString(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            label: const Text(''),
+          ) 
       ],),
       body: Column(children: [
           Flexible(
-            //flex: 3,
+            flex: 3,
             child: Padding(
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 6),
                 child: ListView(
@@ -153,7 +208,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
             padding: const EdgeInsets.all(8),
             child: Text(
               widget.useritem.itemName.toString(),
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             )),
         Expanded(
           child: Container(
@@ -216,7 +271,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                     ),
                   )
                 ]),
-                TableRow(children: [
+                /*TableRow(children: [
                   const TableCell(
                     child: Text(
                       "Item Condition",
@@ -228,20 +283,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                       widget.useritem.itemCondition.toString(),
                     ),
                   )
-                ]),
-                TableRow(children: [
-                  const TableCell(
-                    child: Text(
-                      "Preferred Item",
-                      style: TextStyle(fontWeight: FontWeight.w900),
-                    ),
-                  ),
-                  TableCell(
-                    child: Text(
-                      widget.useritem.itemPrefer.toString(),
-                    ),
-                  )
-                ]),
+                ]),*/
                 TableRow(children: [
                   const TableCell(
                     child: Text(
@@ -259,11 +301,12 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
             ),
           ),
         ),
+        const SizedBox(height: 25,),
         Container(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(6),
           child:
               Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-            IconButton(
+            /*IconButton(
                 onPressed: () {
                   if (userqty <= 1) {
                     userqty = 1;
@@ -274,12 +317,35 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                   }
                   setState(() {});
                 },
-                icon: const Icon(Icons.remove)),
+                icon: const Icon(Icons.remove)
+            ),*/
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: IconButton(
+                onPressed: () {
+                  if (userqty <= 1) {
+                    userqty = 1;
+                    totalprice = singleprice * userqty;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Quantity cannot less than 1")));
+                  return;
+                  } else {
+                    userqty = userqty - 1;
+                    totalprice = singleprice * userqty;
+                  }
+                  setState(() {});
+                },
+                icon: const Icon(Icons.remove),
+              ),
+            ),
             Text(
               userqty.toString(),
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            IconButton(
+            /*IconButton(
                 onPressed: () {
                   if (userqty >= qty) {
                     userqty = qty;
@@ -290,17 +356,42 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                   }
                   setState(() {});
                 },
-                icon: const Icon(Icons.add)),
+                icon: const Icon(Icons.add)),*/
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: IconButton(
+                onPressed: () {
+                  if (userqty >= qty) {
+                    userqty = qty;
+                    totalprice = singleprice * userqty;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Quantity exceeds availability")));
+                  return;
+                  } else {
+                    userqty = userqty + 1;
+                    totalprice = singleprice * userqty;
+                  }
+                  setState(() {});
+                },
+                icon: const Icon(Icons.add),
+              ),
+            ),
           ]),
         ),
         Text(
           "RM ${totalprice.toStringAsFixed(2)}",
-          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         ElevatedButton(
             onPressed: () {
               addtocartdialog();
             },
+            style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.amber,
+                          ),
             child: const Text("Add to Cart")),
       ]),
     );
@@ -314,7 +405,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
     }
     if (widget.user.id.toString() == widget.useritem.userId.toString()) {
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("User cannot add item")));
+          const SnackBar(content: Text("User cannot add own item")));
       return;
     }
     showDialog(
@@ -357,7 +448,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
   void addtocart() {
     http.post(Uri.parse("${MyConfig().SERVER}/barterit_application/php/addtocart.php"),
         body: {
-          "catch_id": widget.useritem.itemId.toString(),
+          "item_id": widget.useritem.itemId.toString(),
           "cart_qty": userqty.toString(),
           "cart_price": totalprice.toString(),
           "userid": widget.user.id,
@@ -380,6 +471,32 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
             const SnackBar(content: Text("Add item to cart unsuccessfully")));
           return; 
         Navigator.pop(context);
+      }
+    });
+  }
+
+  void _loadExploreItems() {
+
+    http.post(Uri.parse("${MyConfig().SERVER}/barterit_application/php/load_items.php"),
+        body: {
+          //"userid": widget.user.id,
+          "cartuserid": widget.user.id,
+          //"pageno": pg.toString()
+        }).then((response) {
+      log(response.body);
+      itemList.clear();
+      if (response.statusCode == 200) {
+        var jsondata = jsonDecode(response.body);
+        if (jsondata['status'] == "success") {         
+          var extractdata = jsondata['data'];
+          cartqty = int.parse(jsondata['cartqty'].toString());
+          //cartqty = jsondata['cartqty'] != null ? int.tryParse(jsondata['cartqty'].toString()) ?? 0 : 0;
+          extractdata['items'].forEach((v) {
+            itemList.add(Item.fromJson(v));
+          });
+          print(itemList[0].itemName);
+        }
+        setState(() {});
       }
     });
   }

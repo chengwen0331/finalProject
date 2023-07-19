@@ -8,6 +8,8 @@ class Order {
   String? orderStatus;
   String? orderLat;
   String? orderLng;
+  String? orderState;
+  String? orderLocality;
 
   Order(
       {this.orderId,
@@ -18,7 +20,9 @@ class Order {
       this.orderDate,
       this.orderStatus,
       this.orderLat,
-      this.orderLng});
+      this.orderLng,
+      this.orderState,
+      this.orderLocality});
 
   Order.fromJson(Map<String, dynamic> json) {
     orderId = json['order_id'];
@@ -30,6 +34,8 @@ class Order {
     orderStatus = json['order_status'];
     orderLat = json['order_lat'];
     orderLng = json['order_lng'];
+    orderState = json['order_state'];
+    orderLocality = json['order_locality'];
   }
 
   Map<String, dynamic> toJson() {
@@ -43,6 +49,8 @@ class Order {
     data['order_status'] = orderStatus;
     data['order_lat'] = orderLat;
     data['order_lng'] = orderLng;
+    data['order_state'] = orderState;
+    data['order_locality'] = orderLocality;
     return data;
   }
 }

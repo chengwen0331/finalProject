@@ -2,7 +2,8 @@
 
 import 'dart:convert';
 import 'dart:developer';
-
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:barterit/model/myconfig.dart';
 import 'package:barterit/model/order.dart';
 import 'package:barterit/model/user.dart';
@@ -29,6 +30,16 @@ class _BuyerOrderDetailsScreenState extends State<BuyerOrderDetailsScreen> {
   late double screenHeight, screenWidth;
   String selectStatus = "Ready";
   //Set<Marker> markers = {};
+late Position _currentPosition;
+
+  String curaddress = "";
+  String curstate = "";
+  String prlat = "";
+  String prlong = "";
+    final TextEditingController _prstateEditingController =
+      TextEditingController();
+  final TextEditingController _prlocalEditingController =
+      TextEditingController();
   List<String> statusList = [
     "New",
     "Processing",
@@ -52,6 +63,7 @@ class _BuyerOrderDetailsScreenState extends State<BuyerOrderDetailsScreen> {
     super.initState();
     loadbuyer();
     loadorderdetails();
+    //_determinePosition();
     selectStatus = widget.order.orderStatus.toString();
     /*if (widget.order.orderLat.toString() == "") {
       picuploc = "Not selected";
@@ -82,61 +94,125 @@ class _BuyerOrderDetailsScreenState extends State<BuyerOrderDetailsScreen> {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(title: const Text("Order Details")),
+      appBar: AppBar(title: const Text("Order Details"),
+      backgroundColor: Colors.amber,
+      actions: [
+          IconButton(
+            onPressed: () {
+              _determinePosition();
+            
+            },
+            icon: const Icon(Icons.location_pin,
+            color: Colors.black,
+                  size: 25,),
+          ),
+      ]
+      ),
       body: Column(children: [
         SizedBox(
           //flex: 3,
-          height: screenHeight / 5.5,
+          height: screenHeight / 3,
           child: Card(
-              child: Row(
-            children: [
-              Container(
-                margin: const EdgeInsets.all(4),
-                width: screenWidth * 0.3,
-                child: Image.asset(
-                  "assets/images/profile.png",
-                ),
-              ),
-              Column(
+              //child: Row(
+            child:Column(
                 children: [
                   user.id == "na"
                       ? const Center(
                           child: Text("Loading..."),
                         )
                       : Padding(
-                          padding: const EdgeInsets.fromLTRB(8, 16, 8, 16),
+                          padding: const EdgeInsets.fromLTRB(10, 16, 10, 16),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Buyer name: ${user.name}",
-                                  style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold)),
-                              Text("Phone: ${user.phone}",
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                  )),
-                              Text("Order ID: ${widget.order.orderId}",
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                  )),
-                              Text(
-                                "Total Paid: RM ${double.parse(widget.order.orderPaid.toString()).toStringAsFixed(2)}",
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                ),
-                              ),
-                              Text("Status: ${widget.order.orderStatus}",
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                  )),
+                              Table(
+                                  columnWidths: const {
+                                    0: FlexColumnWidth(5),
+                                    1: FlexColumnWidth(5),
+                                  },
+                                  children: [
+                                    TableRow(children: [
+                                      const TableCell(
+                                        child: Text(
+                                          "Order ID:",
+                                          style: TextStyle(fontSize: 15,fontWeight: FontWeight.w900),
+                                        ),
+                                      ),
+                                      TableCell(
+                                        child: Text(
+                                        "${widget.order.orderId}",
+                                    style: const TextStyle(fontSize: 15),
+                                          ),
+                                        )
+                                      ]),
+                                      TableRow(children: [
+                                      const TableCell(
+                                        child: Text( 
+                                          "Total Paid:",
+                                          style: TextStyle(fontSize: 15,fontWeight: FontWeight.w900),
+                                        ),
+                                      ),
+                                      TableCell(
+                                        child: Text(
+                                        "RM ${double.parse(widget.order.orderPaid.toString()).toStringAsFixed(2)}",
+                                    style: const TextStyle(fontSize: 15),
+                                          ),
+                                        )
+                                      ]),
+                                      TableRow(children: [
+                                      const TableCell(
+                                        child: Text( 
+                                          "Order Status:",
+                                          style: TextStyle(fontSize: 15,fontWeight: FontWeight.w900),
+                                        ),
+                                      ),
+                                      TableCell(
+                                        child: Text(
+                                        "${widget.order.orderStatus}",
+                                    style: const TextStyle(fontSize: 15),
+                                          ),
+                                        )
+                                      ]),
+                                      TableRow(children: [
+                                      const TableCell(
+                                        child: Text( 
+                                          "Fulfillment Status:",
+                                          style: TextStyle(fontSize: 15,fontWeight: FontWeight.w900),
+                                        ),
+                                      ),
+                                      TableCell(
+                                        child: Text(
+                                        "${widget.order.orderStatus == 'Completed' ? 'Fulfilled' : 'Unfulfilled'}",
+                                    style: const TextStyle(fontSize: 15),
+                                          ),
+                                        )
+                                      ]),
+                                      TableRow(
+                                        children: [
+                                          const TableCell(
+                                            child: Text(
+                                              "Pickup Location:",
+                                              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900),
+                                            ),
+                                          ),
+                                          TableCell(
+                                            child: Text(
+                                              (widget.order.orderLat?.isEmpty == true || widget.order.orderLng?.isEmpty == true)
+                                                  ? "Not selected"
+                                                  : "${widget.order.orderLocality}, ${widget.order.orderState}\n(${widget.order.orderLat}/\n${widget.order.orderLng})",
+                                              style: const TextStyle(fontSize: 15),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      ]),
                             ],
                           ),
                         )
                 ],
               )
-            ],
-          )),
+            
+          ),
         ),
         /*Container(
             padding: const EdgeInsets.all(8),
@@ -175,7 +251,7 @@ class _BuyerOrderDetailsScreenState extends State<BuyerOrderDetailsScreen> {
                               width: screenWidth / 3,
                               fit: BoxFit.cover,
                               imageUrl:
-                                  "${MyConfig().SERVER}/barterit_application/assets/items/${orderdetailsList[index].itemId}.png",
+                                  "${MyConfig().SERVER}/barterit_application/assets/items/${orderdetailsList[index].itemId}_1.png",
                               placeholder: (context, url) =>
                                   const LinearProgressIndicator(),
                               errorWidget: (context, url, error) =>
@@ -197,14 +273,12 @@ class _BuyerOrderDetailsScreenState extends State<BuyerOrderDetailsScreen> {
                                   Text(
                                     "Quantity: ${orderdetailsList[index].orderdetailQty}",
                                     style: const TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold),
+                                        fontSize: 12,),
                                   ),
                                   Text(
-                                    "Paid: RM ${double.parse(orderdetailsList[index].orderdetailPaid.toString()).toStringAsFixed(2)}",
+                                    "Total Paid: RM ${double.parse(orderdetailsList[index].orderdetailPaid.toString()).toStringAsFixed(2)}",
                                     style: const TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold),
+                                        fontSize: 12,),
                                   ),
                                 ],
                               ),
@@ -212,7 +286,8 @@ class _BuyerOrderDetailsScreenState extends State<BuyerOrderDetailsScreen> {
                           ]),
                         ),
                       );
-                    })),
+                    })
+              ),
         SizedBox(
           // color: Colors.red,
           width: screenWidth,
@@ -243,7 +318,12 @@ class _BuyerOrderDetailsScreenState extends State<BuyerOrderDetailsScreen> {
                       onPressed: () {
                         submitStatus("Completed");
                       },
-                      child: const Text("Submit"))
+                      style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.amber,
+                          ),
+                      child: const Text("Submit",
+                      style: TextStyle(
+                          fontSize: 16,),))
                 ]),
           ),
         )
@@ -307,12 +387,8 @@ class _BuyerOrderDetailsScreenState extends State<BuyerOrderDetailsScreen> {
         widget.order.orderStatus = st;
         selectStatus = st;
         setState(() {});
-        Fluttertoast.showToast(
-            msg: "Success",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
-            fontSize: 16.0);
+        ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text("Update Success")));
       }
     });
   }
@@ -361,4 +437,82 @@ class _BuyerOrderDetailsScreenState extends State<BuyerOrderDetailsScreen> {
       setState(() {});
     });
   }*/
+
+  void updateAddress() {
+    String state = _prstateEditingController.text;
+    String locality = _prlocalEditingController.text;
+
+    http.post(Uri.parse("${MyConfig().SERVER}/barterit_application/php/update_order.php"),
+        body: {
+          "orderid": widget.order.orderId.toString(),
+          "latitude": prlat,
+          "longitude": prlong,
+          "state": state,
+          "locality": locality,
+        }).then((response) {
+      print(response.body);
+      if (response.statusCode == 200) {
+        var jsondata = jsonDecode(response.body);
+        if (jsondata['status'] == 'success') {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text("Update Success")));
+        } else {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text("Update Failed")));
+        }
+        //Navigator.pop(context);
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("Update Failed")));
+        //Navigator.pop(context);
+      }
+    });
+  }
+
+  void _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error('Location permissions are permanently denied.');
+    }
+    _currentPosition = await Geolocator.getCurrentPosition();
+
+    _getAddress(_currentPosition);
+    //return await Geolocator.getCurrentPosition();
+  }
+
+  _getAddress(Position pos) async {
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(pos.latitude, pos.longitude);
+    if (placemarks.isEmpty) {
+      _prlocalEditingController.text = "Changlun";
+      _prstateEditingController.text = "Kedah";
+      prlat = "6.443455345";
+      prlong = "100.05488449";
+      
+    } else {
+      _prlocalEditingController.text = placemarks[0].locality.toString();
+      _prstateEditingController.text =
+          placemarks[0].administrativeArea.toString(); //put 0 because the previous record will be replaced
+      prlat = _currentPosition.latitude.toString();
+      prlong = _currentPosition.longitude.toString();
+    }
+    setState(() {
+      //Navigator.of(context).pop();
+                updateAddress();
+    });
+  }
 }

@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 
 class BuyerOrderScreen extends StatefulWidget {
@@ -19,6 +20,7 @@ class BuyerOrderScreen extends StatefulWidget {
 }
 
 class _BuyerOrderScreenState extends State<BuyerOrderScreen> {
+  final df = DateFormat('dd-MM-yyyy hh:mm a');
   late double screenHeight, screenWidth, cardwitdh;
     var val = 50;
   String status = "Loading...";
@@ -50,7 +52,9 @@ class _BuyerOrderScreenState extends State<BuyerOrderScreen> {
         ],),
       body: Container(
         child: orderList.isEmpty
-            ? Container()
+            ? const Center(
+              child: Text("No Data", style:TextStyle(fontSize: 15)),
+            )
             : Column(
                 children: [
                   SizedBox(
@@ -83,7 +87,14 @@ class _BuyerOrderScreenState extends State<BuyerOrderScreen> {
                                           ),
                                           const SizedBox(height: 10),
                                           Text(
-                                            "Order from: ${widget.user.name}",
+                                            "Order by: ${widget.user.name}",
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            "Phone Number: ${widget.user.phone}",
                                             style: const TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
@@ -107,6 +118,8 @@ class _BuyerOrderScreenState extends State<BuyerOrderScreen> {
                       child: ListView.builder(
                           itemCount: orderList.length,
                           itemBuilder: (context, index) {
+                            String? orderDate = orderList[index].orderDate;
+                            String datePart = orderDate?.substring(0, 10) ?? 'Unknown';
                             return Card(
                             child:ListTile(
                               onTap: () async {
@@ -174,7 +187,14 @@ class _BuyerOrderScreenState extends State<BuyerOrderScreen> {
                                               fontSize: 14,
                                               fontWeight: FontWeight.bold),
                                               ),
-                                         
+                                        Text(
+                                          "Order Date: $datePart",
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+
                                         Text(
                                             "Order Status: ${orderList[index].orderStatus}",
                                             style: const TextStyle(

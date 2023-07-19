@@ -28,7 +28,7 @@ class _BuyerOrderScreenState extends State<BuyerOrderScreen> {
   @override
   void initState() {
     super.initState();
-    loadsellerorders();
+    loadorders();
   }
 
   @override
@@ -132,7 +132,7 @@ class _BuyerOrderScreenState extends State<BuyerOrderScreen> {
                                             BuyerOrderDetailsScreen(
                                               order: myorder,
                                             )));
-                                loadsellerorders();
+                                loadorders();
                               },
                               /*leading: CircleAvatar(
                                   child: Text((index + 1).toString())),*/
@@ -179,18 +179,18 @@ class _BuyerOrderScreenState extends State<BuyerOrderScreen> {
                                         Text(
                                             "Order ID: ${orderList[index].orderId}",
                                             style: const TextStyle(
-                                              fontSize: 14,
+                                              fontSize: 13,
                                               fontWeight: FontWeight.bold),),
                                         Text(
                                           "Total Payment: RM ${double.parse(orderList[index].orderPaid.toString()).toStringAsFixed(2)}",
                                           style: const TextStyle(
-                                              fontSize: 14,
+                                              fontSize: 13,
                                               fontWeight: FontWeight.bold),
                                               ),
                                         Text(
                                           "Order Date: $datePart",
                                           style: const TextStyle(
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
@@ -198,7 +198,7 @@ class _BuyerOrderScreenState extends State<BuyerOrderScreen> {
                                         Text(
                                             "Order Status: ${orderList[index].orderStatus}",
                                             style: const TextStyle(
-                                              fontSize: 14,
+                                              fontSize: 13,
                                               fontWeight: FontWeight.bold),)
                                       ]),
                                   Column(
@@ -221,7 +221,7 @@ class _BuyerOrderScreenState extends State<BuyerOrderScreen> {
   //                               Text(orderList[index].orderStatus.toString()),
   //                               Text(orderList[index].orderPaid.toString()),
 
-  void loadsellerorders() {
+  void loadorders() {
     http.post(
         Uri.parse("${MyConfig().SERVER}/barterit_application/php/load_buyerorder.php"),
         body: {"buyerid": widget.user.id}).then((response) {
@@ -239,12 +239,9 @@ class _BuyerOrderScreenState extends State<BuyerOrderScreen> {
           status = "Please register an account first";
           setState(() {});
           Navigator.of(context).pop();
-          Fluttertoast.showToast(
-              msg: "No order found",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
-              fontSize: 16.0);
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text("No order found")));
+                  return;
         }
         setState(() {});
       }

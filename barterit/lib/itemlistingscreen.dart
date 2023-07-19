@@ -5,6 +5,7 @@ import 'package:barterit/model/item.dart';
 import 'package:barterit/model/myconfig.dart';
 import 'package:barterit/model/user.dart';
 import 'package:barterit/newitemscreen.dart';
+import 'package:barterit/sellerorderscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
@@ -61,6 +62,35 @@ class _ItemListingScreenState extends State<ItemListingScreen> {
         appBar: AppBar(
           title: Text(maintitle),
           backgroundColor: Colors.amber,
+          actions: [
+            PopupMenuButton(
+                // add icon, by default "3 dot" icon
+                icon: const Icon(Icons.filter_list),
+                itemBuilder: (context) {
+              return [
+                const PopupMenuItem<int>(
+                  value: 0,
+                  child: Text("My Order"),
+                ),
+
+              ];
+            }, onSelected: (value) async {
+              if (value == 0) {
+                if (widget.user.id.toString() == "na") {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text("Please login/register an account")));
+                  return;
+                }
+                await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (content) => SellerOrderScreen(
+                              user: widget.user,
+                            )));
+              } 
+            }
+          ),
+        ],
         ),
       body: itemList.isEmpty
           ? const Center(
@@ -186,9 +216,9 @@ class _ItemListingScreenState extends State<ItemListingScreen> {
       return;
     }
 
-    http.post(Uri.parse("${MyConfig().SERVER}/barterit_application/php/load_items.php"),
+    http.post(Uri.parse("${MyConfig().SERVER}/barterit_application/php/load_selleritems.php"),
         body: {
-          //"userid": widget.user.id
+          "userid": widget.user.id
           }).then((response) {
       itemList.clear();
       if (response.statusCode == 200) {

@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:barterit/model/myconfig.dart';
 import 'package:barterit/model/order.dart';
 import 'package:barterit/model/orderdetails.dart';
@@ -8,12 +10,12 @@ import 'package:barterit/model/user.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-//import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 
 
 class SellerOrderDetailsScreen extends StatefulWidget {
   final Order order;
+  
   const SellerOrderDetailsScreen({super.key, required this.order});
 
   @override
@@ -25,8 +27,18 @@ class _SellerOrderDetailsScreenState extends State<SellerOrderDetailsScreen> {
   List<OrderDetails> orderdetailsList = <OrderDetails>[];
   late double screenHeight, screenWidth;
   String selectStatus = "New";
+  var val = 50;
   // ignore: prefer_typing_uninitialized_variables
+  late Position _currentPosition;
   var pickupLatLng;
+  String curaddress = "";
+  String curstate = "";
+  String prlat = "";
+  String prlong = "";
+    final TextEditingController _prstateEditingController =
+      TextEditingController();
+  final TextEditingController _prlocalEditingController =
+      TextEditingController();
   List<String> statusList = ["New", "Processing", "Ready", "Completed"];
   late User user = User(
       id: "na",
@@ -37,14 +49,7 @@ class _SellerOrderDetailsScreenState extends State<SellerOrderDetailsScreen> {
       password: "na",
       otp: "na");
   String picuploc = "Not selected";
-  //Set<Marker> markers = {};
-  //final Completer<GoogleMapController> _controller =
-      //Completer<GoogleMapController>();
-
-  //static const CameraPosition _kchanglun = CameraPosition(
-    //target: LatLng(6.4301523, 100.4287586),
-    //zoom: 12.4746,
-  //);
+  var _pickupPosition;
 
   @override
   void initState() {
@@ -66,10 +71,11 @@ class _SellerOrderDetailsScreenState extends State<SellerOrderDetailsScreen> {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(title: const Text("Order Details")),
+      appBar: AppBar(title: const Text("Order Details"),
+      backgroundColor: Colors.amber,),
       body: Column(children: [
         Flexible(
-          flex: 3,
+          flex: 4,
           //height: screenHeight / 5.5,
           child: Card(
               child: Row(
@@ -77,9 +83,18 @@ class _SellerOrderDetailsScreenState extends State<SellerOrderDetailsScreen> {
               Container(
                 margin: const EdgeInsets.all(4),
                 width: screenWidth * 0.3,
-                child: Image.asset(
-                  "assets/images/profile.png",
-                ),
+                child:Container(
+                                            margin: const EdgeInsets.all(4),
+                                            width: screenWidth * 0.25,
+                                            child: CachedNetworkImage(
+                                              imageUrl: "${MyConfig().SERVER}/barterit_application/assets/profile/${user.id}.png?v=$val",
+                                              placeholder: (context, url) => const LinearProgressIndicator(),
+                                              errorWidget: (context, url, error) => Image.network(
+                                                "${MyConfig().SERVER}/barterit_application/assets/profile/0.png",
+                                                scale: 2,
+                                              ),
+                                            ),
+                                          ),
               ),
               Column(
                 children: [
@@ -92,9 +107,9 @@ class _SellerOrderDetailsScreenState extends State<SellerOrderDetailsScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Buyer name: ${user.name}",
+                              Text("Buyer Name: ${user.name}",
                                   style: const TextStyle(
-                                      fontSize: 16,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.bold)),
                               Text("Phone: ${user.phone}",
                                   style: const TextStyle(
@@ -138,7 +153,7 @@ class _SellerOrderDetailsScreenState extends State<SellerOrderDetailsScreen> {
         orderdetailsList.isEmpty
             ? Container()
             : Expanded(
-                flex: 8,
+                flex: 7,
                 child: ListView.builder(
                     itemCount: orderdetailsList.length,
                     itemBuilder: (context, index) {
@@ -150,7 +165,7 @@ class _SellerOrderDetailsScreenState extends State<SellerOrderDetailsScreen> {
                               width: screenWidth / 3,
                               fit: BoxFit.cover,
                               imageUrl:
-                                  "${MyConfig().SERVER}/barterit_application/assets/catches/${orderdetailsList[index].itemId}.png",
+                                  "${MyConfig().SERVER}/barterit_application/assets/items/${orderdetailsList[index].itemId}_1.png",
                               placeholder: (context, url) =>
                                   const LinearProgressIndicator(),
                               errorWidget: (context, url, error) =>
@@ -172,14 +187,12 @@ class _SellerOrderDetailsScreenState extends State<SellerOrderDetailsScreen> {
                                   Text(
                                     "Quantity: ${orderdetailsList[index].orderdetailQty}",
                                     style: const TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold),
+                                        fontSize: 12,),
                                   ),
                                   Text(
-                                    "Paid: RM ${double.parse(orderdetailsList[index].orderdetailPaid.toString()).toStringAsFixed(2)}",
+                                    "Total Paid: RM ${double.parse(orderdetailsList[index].orderdetailPaid.toString()).toStringAsFixed(2)}",
                                     style: const TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold),
+                                        fontSize: 12,),
                                   ),
                                 ],
                               ),
@@ -187,41 +200,75 @@ class _SellerOrderDetailsScreenState extends State<SellerOrderDetailsScreen> {
                           ]),
                         ),
                       );
-                    })),
+                    })
+              ),
         SizedBox(
-          // color: Colors.red,
+  // color: Colors.red,
           width: screenWidth,
-          height: screenHeight * 0.1,
+          height: screenHeight * 0.23,
           child: Card(
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  const Text("Set Order Status"),
-                  DropdownButton(
-                    itemHeight: 60,
-                    value: selectStatus,
-                    onChanged: (newValue) {
-                      setState(() {
-                        selectStatus = newValue.toString();
-                      });
-                    },
-                    items: statusList.map((selectStatus) {
-                      return DropdownMenuItem(
-                        value: selectStatus,
-                        child: Text(
-                          selectStatus,
-                        ),
-                      );
-                    }).toList(),
+    child: Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            const Text("Set Order Status: ",
+            style: TextStyle(
+                                fontSize: 16,
+                              ),
+            ),
+            DropdownButton(
+              itemHeight: 50,
+              value: selectStatus,
+              onChanged: (newValue) {
+                setState(() {
+                  selectStatus = newValue.toString();
+                });
+              },
+              items: statusList.map((selectStatus) {
+                return DropdownMenuItem(
+                  value: selectStatus,
+                  child: Text(
+                    selectStatus,
+                    style: TextStyle(
+                                fontSize: 16,
+                              ),
                   ),
-                  ElevatedButton(
-                      onPressed: () {
-                        submitStatus(selectStatus);
-                      },
-                      child: const Text("Submit"))
-                ]),
-          ),
+                );
+              }).toList(),
+            ),
+          ],
+        ),
+        SizedBox(
+                      width: screenWidth / 1.2,
+                      //height: 50,
+                      child: Container(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            submitStatus(selectStatus);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.amber,
+                          ),
+                          child: const Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              "Submit",
+                              style: TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+
+      ],
+    ),
+  ),
         )
+
       ]),
     );
   }
@@ -269,26 +316,9 @@ class _SellerOrderDetailsScreenState extends State<SellerOrderDetailsScreen> {
   }
 
   void submitStatus(String st) {
-    if (pickupLatLng == null) {
-      Fluttertoast.showToast(
-          msg: "Please select pickup location",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          fontSize: 16.0);
-      return;
-    }
-    String lat = pickupLatLng.latitude.toString();
-    String lng = pickupLatLng.longitude.toString();
-
     http.post(
         Uri.parse("${MyConfig().SERVER}/barterit_application/php/set_orderstatus.php"),
-        body: {
-          "orderid": widget.order.orderId,
-          "status": st,
-          "lat": lat,
-          "lng": lng
-        }).then((response) {
+        body: {"orderid": widget.order.orderId, "status": st}).then((response) {
       log(response.body);
       //orderList.clear();
       if (response.statusCode == 200) {
@@ -298,76 +328,10 @@ class _SellerOrderDetailsScreenState extends State<SellerOrderDetailsScreen> {
         widget.order.orderStatus = st;
         selectStatus = st;
         setState(() {});
-        Fluttertoast.showToast(
-            msg: "Success",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
-            fontSize: 16.0);
+        ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text("Update Success")));
       }
     });
   }
 
-  /*pickupDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: const Text("Select your pickup location"),
-              content: GoogleMap(
-                mapType: MapType.normal,
-                initialCameraPosition: _kchanglun,
-                markers: markers.toSet(),
-                onTap: (newLatLng) {
-                  // print(newLatLng.latitude);
-                  // print(newLatLng.longitude);
-                  MarkerId markerId1 = const MarkerId("1");
-                  markers.clear();
-                  markers.add(Marker(
-                    markerId: markerId1,
-                    position: LatLng(newLatLng.latitude, newLatLng.longitude),
-                    icon: BitmapDescriptor.defaultMarkerWithHue(
-                        BitmapDescriptor.hueRed),
-                  ));
-                  pickupLatLng = newLatLng;
-                  setState(() {});
-                },
-                myLocationEnabled: true,
-                onMapCreated: (GoogleMapController controller) {
-                  _controller.complete(controller);
-                },
-              ),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text("Cancel"),
-                ),
-                TextButton(
-                  onPressed: () {
-                    if (pickupLatLng == null) {
-                      Fluttertoast.showToast(
-                          msg: "Please select pickup location from map",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.CENTER,
-                          timeInSecForIosWeb: 1,
-                          fontSize: 16.0);
-                      return;
-                    } else {
-                      Navigator.pop(context);
-                      picuploc = "Selected";
-                    }
-                  },
-                  child: const Text("Select"),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    ).then((val) {
-      setState(() {});
-    });
-  }*/
 }

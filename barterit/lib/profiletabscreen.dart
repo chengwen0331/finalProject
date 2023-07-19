@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'package:barterit/buyerorderscreen.dart';
 import 'package:barterit/loginscreen.dart';
 import 'package:barterit/model/myconfig.dart';
 import 'package:barterit/model/user.dart';
@@ -240,6 +241,25 @@ class _ProfileTabScreenState extends State<ProfileTabScreen> {
                         MaterialButton(
                           onPressed: () {},
                           child: const Text("MY WISHLIST"),
+                        ),
+                        const Divider(
+                          height: 2,
+                        ),
+                        MaterialButton(
+                          onPressed: () async {
+                            if (widget.user.id.toString() == "na") {
+                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                  content: Text("Please login/register an account")));
+                              return;
+                            }
+                            await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (content) => BuyerOrderScreen(
+                                          user: widget.user,
+                                        )));
+                                        },
+                          child: const Text("MY ORDER"),
                         ),
                         const Divider(
                           height: 2,

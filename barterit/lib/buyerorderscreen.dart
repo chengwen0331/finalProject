@@ -6,7 +6,7 @@ import 'package:barterit/model/order.dart';
 import 'package:barterit/model/user.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
 
 
@@ -20,7 +20,7 @@ class BuyerOrderScreen extends StatefulWidget {
 
 class _BuyerOrderScreenState extends State<BuyerOrderScreen> {
   late double screenHeight, screenWidth, cardwitdh;
-
+    var val = 50;
   String status = "Loading...";
   List<Order> orderList = <Order>[];
   @override
@@ -34,7 +34,20 @@ class _BuyerOrderScreenState extends State<BuyerOrderScreen> {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(title: const Text("Your Order")),
+      appBar: AppBar(title: const Text("Your Order"),
+      backgroundColor: Colors.amber,
+      actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.notifications),
+            color:Colors.black,
+          ),
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.search),
+            color:Colors.black,
+          ),
+        ],),
       body: Container(
         child: orderList.isEmpty
             ? Container()
@@ -47,48 +60,55 @@ class _BuyerOrderScreenState extends State<BuyerOrderScreen> {
                       child: Row(
                         children: [
                           Flexible(
-                              flex: 7,
-                              child: Row(
-                                children: [
-                                  const CircleAvatar(
-                                    backgroundImage: AssetImage(
-                                      "assets/images/profile.png",
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Card(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            margin: const EdgeInsets.all(4),
+                                            width: screenWidth * 0.25,
+                                            child: CachedNetworkImage(
+                                              imageUrl: "${MyConfig().SERVER}/barterit_application/assets/profile/${widget.user.id}.png?v=$val",
+                                              placeholder: (context, url) => const LinearProgressIndicator(),
+                                              errorWidget: (context, url, error) => Image.network(
+                                                "${MyConfig().SERVER}/barterit_application/assets/profile/0.png",
+                                                scale: 2,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 10),
+                                          Text(
+                                            "Order from: ${widget.user.name}",
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                  const SizedBox(
-                                    width: 8,
-                                  ),
-                                  Text(
-                                    "Hello ${widget.user.name}!",
-                                    style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              )),
-                          Expanded(
-                            flex: 3,
-                            child: Row(children: [
-                              IconButton(
-                                icon: const Icon(Icons.notifications),
-                                onPressed: () {},
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.search),
-                                onPressed: () {},
-                              ),
-                            ]),
-                          )
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
                   ),
-                  const Text("Your Current Order"),
+
+                  //const Text("Your Current Order"),
                   Expanded(
                       child: ListView.builder(
                           itemCount: orderList.length,
                           itemBuilder: (context, index) {
-                            return ListTile(
+                            return Card(
+                            child:ListTile(
                               onTap: () async {
                                 Order myorder =
                                     Order.fromJson(orderList[index].toJson());
@@ -101,11 +121,40 @@ class _BuyerOrderScreenState extends State<BuyerOrderScreen> {
                                             )));
                                 loadsellerorders();
                               },
-                              leading: CircleAvatar(
-                                  child: Text((index + 1).toString())),
+                              /*leading: CircleAvatar(
+                                  child: Text((index + 1).toString())),*/
+                              leading: Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    (index + 1).toString(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+
                               title: Text(
-                                  "Receipt: ${orderList[index].orderBill}"),
-                              trailing: const Icon(Icons.arrow_forward),
+                                  "Receipt: ${orderList[index].orderBill}",
+                                  style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                  ),
+                              //trailing: const Icon(Icons.arrow_forward),
+                              trailing: CircleAvatar(
+                                backgroundColor: Colors.grey,
+                                child: Icon(
+                                  Icons.arrow_forward,
+                                  color: Colors.white,
+                                ),
+                              ),
                               subtitle: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -115,24 +164,32 @@ class _BuyerOrderScreenState extends State<BuyerOrderScreen> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                            "Order ID: ${orderList[index].orderId}"),
+                                            "Order ID: ${orderList[index].orderId}",
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold),),
                                         Text(
-                                            "Status: ${orderList[index].orderStatus}")
+                                          "Total Payment: RM ${double.parse(orderList[index].orderPaid.toString()).toStringAsFixed(2)}",
+                                          style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold),
+                                              ),
+                                         
+                                        Text(
+                                            "Order Status: ${orderList[index].orderStatus}",
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold),)
                                       ]),
                                   Column(
                                     children: [
-                                      Text(
-                                        "RM ${double.parse(orderList[index].orderPaid.toString()).toStringAsFixed(2)}",
-                                        style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
+                                      
                                       const Text("")
                                     ],
                                   )
                                 ],
                               ),
-                            );
+                            ));
                           })),
                 ],
               ),

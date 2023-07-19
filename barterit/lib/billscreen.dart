@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:barterit/model/user.dart';
 import 'package:flutter/material.dart';
-//import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class BillScreen extends StatefulWidget {
   final User user;
@@ -16,8 +16,8 @@ class BillScreen extends StatefulWidget {
 }
 
 class _BillScreenState extends State<BillScreen> {
-  //final Completer<WebViewController> _controller =
-      //Completer<WebViewController>();
+  final Completer<WebViewController> _controller =
+      Completer<WebViewController>();
 
   @override
   void initState() {
@@ -31,9 +31,10 @@ class _BillScreenState extends State<BillScreen> {
           title: const Text("Bill"),
         ),
         body: Center(
-          /*child: WebView(
+          child: WebView(
             initialUrl:
-                'https://slumberjer.com/mynelayan/php/payment.php?sellerid=${widget.user.id}&userid=${widget.user.id}&email=${widget.user.email}&phone=${widget.user.phone}&name=${widget.user.name}&amount=${widget.totalprice}',
+                //'https://slumberjer.com/mynelayan/php/payment.php?sellerid=${widget.user.id}&userid=${widget.user.id}&email=${widget.user.email}&phone=${widget.user.phone}&name=${widget.user.name}&amount=${widget.totalprice}',
+                'https://wzyjoker.com/barterit_application/php/payment.php?sellerid=${widget.user.id}&userid=${widget.user.id}&email=${widget.user.email}&phone=${widget.user.phone}&name=${widget.user.name}&amount=${widget.totalprice}',
             javascriptMode: JavascriptMode.unrestricted,
             onWebViewCreated: (WebViewController webViewController) {
               _controller.complete(webViewController);
@@ -52,7 +53,7 @@ class _BillScreenState extends State<BillScreen> {
                 //isLoading = false;
               });
             },
-          ),*/
+          ),
         ));
   }
 }

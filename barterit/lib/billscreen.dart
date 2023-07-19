@@ -1,7 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:barterit/model/myconfig.dart';
 import 'package:barterit/model/user.dart';
+import 'package:barterit/simulatorscreen.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class BillScreen extends StatefulWidget {
   final User user;
@@ -15,7 +19,15 @@ class BillScreen extends StatefulWidget {
 }
 
 class _BillScreenState extends State<BillScreen> {
-
+  int? value = 0;
+  String selectedType = "Online Banking";
+  List<String> paymentlist = [
+    'Online Banking',
+    'Paypal',
+    'Credit Card / Debit Card',
+    'Billplz',
+  ];
+  late double screenHeight, screenWidth, cardwitdh;
   @override
   void initState() {
     super.initState();
@@ -23,6 +35,8 @@ class _BillScreenState extends State<BillScreen> {
 
   @override
   Widget build(BuildContext context) {
+    screenHeight = MediaQuery.of(context).size.height;
+    screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
         appBar: AppBar(
           title: const Text("Bill"),
@@ -46,7 +60,7 @@ class _BillScreenState extends State<BillScreen> {
                                       thickness: 2.0,
                                     ),
                                   ),
-            const SizedBox(height: 5),
+            //const SizedBox(height: 5),
             Container(
               width: double.infinity,
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
@@ -84,7 +98,7 @@ class _BillScreenState extends State<BillScreen> {
                           fontSize: 16,
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 5),
                       Text(
                         "Total Payment: RM${widget.totalprice.toStringAsFixed(2)}",
                         style: const TextStyle(
@@ -124,6 +138,7 @@ class _BillScreenState extends State<BillScreen> {
               ),
             ),
             const SizedBox(height: 5),
+          
             const Padding(
               padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
               child: Align(
@@ -137,32 +152,147 @@ class _BillScreenState extends State<BillScreen> {
                 ),
               ),
             ),
+            
+            SizedBox(
+                          height: 50,
+                          child: Container(
+                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.grey,
+                              width: 1.0,
+                            ),
+                            borderRadius: BorderRadius.circular(4.0),
+                          ),
+                          child: DropdownButton(
+                            value: selectedType,
+                            onChanged: (newValue) {
+                              setState(() {
+                                selectedType = newValue!;
+                                print(selectedType);
+                              });
+                            },
+                            items: paymentlist.map((selectedType) {
+                              return DropdownMenuItem(
+                                value: selectedType,
+                                child: Text(
+                                  selectedType,
+                                ),
+                              );
+                            }).toList(),
+                            dropdownColor: Colors.grey[200],
+                          ),
+            )),
+            const SizedBox(height: 10),
+            SizedBox(
+                      width: screenWidth / 1.2,
+                      height: 50,
+                      child: Container(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            paymentDialog();
+                            
+                            
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.amber,
+                          ),
+                          child: const Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              "Pay",
+                              style: TextStyle(
+                                fontSize: 18,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  
           ],
-          
-          /*child: WebView(
-            initialUrl:
-                //'https://slumberjer.com/mynelayan/php/payment.php?sellerid=${widget.user.id}&userid=${widget.user.id}&email=${widget.user.email}&phone=${widget.user.phone}&name=${widget.user.name}&amount=${widget.totalprice}',
-                'https://wzyjoker.com/barterit_application/php/payment.php?sellerid=${widget.user.id}&userid=${widget.user.id}&email=${widget.user.email}&phone=${widget.user.phone}&name=${widget.user.name}&amount=${widget.totalprice}',
-            javascriptMode: JavascriptMode.unrestricted,
-            onWebViewCreated: (WebViewController webViewController) {
-              _controller.complete(webViewController);
-            },
-            onProgress: (int progress) {
-              // prg = progress as double;
-              // setState(() {});
-              // print('WebView is loading (progress : $progress%)');
-            },
-            onPageStarted: (String url) {
-              // print('Page started loading: $url');
-            },
-            onPageFinished: (String url) {
-              //print('Page finished loading: $url');
-              setState(() {
-                //isLoading = false;
-              });
-            },
-          ),*/
 
         )));
+    
   }
+
+  void paymentDialog() {
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          title: const Text(
+            "Place Order?",
+            style: TextStyle(),
+          ),
+          content: const Text("Are you sure?", style: TextStyle()),
+          actions: <Widget>[
+            TextButton(
+              child: const Text(
+                "Yes",
+                style: TextStyle(),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (content) => SimulatorScreen(
+                                        user: widget.user,
+                                        totalprice:widget.totalprice,
+                                      )));
+                                      //Navigator.pop(context);
+                //makePayment();
+                //registerUser();
+              },
+            ),
+            TextButton(
+              child: const Text(
+                "No",
+                style: TextStyle(),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+  /*void makePayment() {
+    //String itemname = _itemnameEditingController.text;
+    
+
+    http.post(Uri.parse("${MyConfig().SERVER}/barterit_application/php/payment_update.php"),
+        body: {
+          "userid": widget.user.id.toString(),
+          "phone": widget.user.phone.toString(),
+          "amount": widget.totalprice.toStringAsFixed(2),
+          "email": widget.user.email.toString(),
+          "name": widget.user.name.toString(),
+
+        }).then((response) {
+      print(response.body);
+      if (response.statusCode == 200) {
+        var jsondata = jsonDecode(response.body);
+        if (jsondata['status'] == 'success') {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text("Payment Success")));
+        } else {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text("Payment Failed")));
+        }
+        Navigator.pop(context);
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("Payment Failed")));
+        Navigator.pop(context);
+      }
+    });
+  }*/
 }

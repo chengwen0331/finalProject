@@ -24,12 +24,10 @@ class BuyerOrderDetailsScreen extends StatefulWidget {
       _BuyerOrderDetailsScreenState();
 }
 
-// ignore: duplicate_ignore
 class _BuyerOrderDetailsScreenState extends State<BuyerOrderDetailsScreen> {
   List<OrderDetails> orderdetailsList = <OrderDetails>[];
   late double screenHeight, screenWidth;
   String selectStatus = "Ready";
-  //Set<Marker> markers = {};
 late Position _currentPosition;
 
   String curaddress = "";
@@ -66,28 +64,6 @@ late Position _currentPosition;
     selectStatus = widget.order.orderStatus.toString();
     prlat = widget.order.orderLat.toString();
     prlong = widget.order.orderLng.toString();
-    /*if (widget.order.orderLat.toString() == "") {
-      picuploc = "Not selected";
-      _pickupPosition = const CameraPosition(
-        target: LatLng(6.4301523, 100.4287586),
-        zoom: 12.4746,
-      );
-    } else {
-      picuploc = "Selected";
-      pickupLatLng = LatLng(double.parse(widget.order.orderLat.toString()),
-          double.parse(widget.order.orderLng.toString()));
-      _pickupPosition = CameraPosition(
-        target: pickupLatLng,
-        zoom: 18.4746,
-      );
-      MarkerId markerId1 = const MarkerId("1");
-      markers.clear();
-      markers.add(Marker(
-        markerId: markerId1,
-        position: pickupLatLng,
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-      ));
-    }*/
   }
 
   @override
@@ -120,7 +96,6 @@ late Position _currentPosition;
           //flex: 3,
           height: screenHeight / 3,
           child: Card(
-              //child: Row(
             child:Column(
                 children: [
                   user.id == "na"
@@ -222,28 +197,7 @@ late Position _currentPosition;
             
           ),
         ),
-        /*Container(
-            padding: const EdgeInsets.all(8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                ElevatedButton(
-                    onPressed: () {
-                      if (picuploc == "Selected") {
-                        loadMapDialog();
-                      } else {
-                        Fluttertoast.showToast(
-                            msg: "Location not available",
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.CENTER,
-                            timeInSecForIosWeb: 1,
-                            fontSize: 16.0);
-                      }
-                    },
-                    child: const Text("See Pickup Location")),
-                Text(picuploc)
-              ],
-            )),*/
+
         orderdetailsList.isEmpty
             ? Container()
             : Expanded(
@@ -305,23 +259,6 @@ late Position _currentPosition;
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   const Text("Set order status as completed"),
-                  // DropdownButton(
-                  //   itemHeight: 60,
-                  //   value: selectStatus,
-                  //   onChanged: (newValue) {
-                  //     setState(() {
-                  //       selectStatus = newValue.toString();
-                  //     });
-                  //   },
-                  //   items: statusList.map((selectStatus) {
-                  //     return DropdownMenuItem(
-                  //       value: selectStatus,
-                  //       child: Text(
-                  //         selectStatus,
-                  //       ),
-                  //     );
-                  //   }).toList(),
-                  // ),
                   ElevatedButton(
                       onPressed: () {
                         submitStatus("Completed");
@@ -358,8 +295,6 @@ late Position _currentPosition;
             orderdetailsList.add(OrderDetails.fromJson(v));
           });
         } else {
-          // status = "Please register an account first";
-          // setState(() {});
         }
         setState(() {});
       }
@@ -400,51 +335,6 @@ late Position _currentPosition;
       }
     });
   }
-
-  /*void loadMapDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: const Text("Select your pickup location"),
-              content: GoogleMap(
-                mapType: MapType.normal,
-                initialCameraPosition: _pickupPosition,
-                markers: markers.toSet(),
-              ),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text("Cancel"),
-                ),
-                TextButton(
-                  onPressed: () {
-                    if (pickupLatLng == null) {
-                      Fluttertoast.showToast(
-                          msg: "Please select pickup location from map",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.CENTER,
-                          timeInSecForIosWeb: 1,
-                          fontSize: 16.0);
-                      return;
-                    } else {
-                      Navigator.pop(context);
-                      picuploc = "Selected";
-                    }
-                  },
-                  child: const Text("Select"),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    ).then((val) {
-      setState(() {});
-    });
-  }*/
 
   void updateAddress() {
     String state = _prstateEditingController.text;

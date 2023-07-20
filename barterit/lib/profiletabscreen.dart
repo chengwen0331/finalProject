@@ -56,61 +56,6 @@ class _ProfileTabScreenState extends State<ProfileTabScreen> {
     return Scaffold(
       body: Center(
         child: Column(children: [
-          /*Container(
-            color: Color.fromARGB(255, 255, 250, 202),
-            padding: const EdgeInsets.all(8),
-            height: screenHeight * 0.25,
-            width: screenWidth,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center, 
-              children: [
-                Container(
-            margin: const EdgeInsets.all(4),
-            width: screenWidth * 0.23,
-            child: Image.asset(
-              "assets/profile.png",
-            ),
-                ),
-                Flexible(
-                flex: 6,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(widget.user.name.toString(),
-                        style: const TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold)),
-                    const Padding(
-                      padding: EdgeInsets.fromLTRB(0, 2, 0, 8),
-                      child: Divider(
-                        color: Colors.blueGrey,
-                        height: 2,
-                        thickness: 2.0,
-                      ),
-                    ),
-                    Table(
-                      columnWidths: const {
-                        0: FractionColumnWidth(0.3),
-                        1: FractionColumnWidth(0.7)
-                      },
-                      defaultVerticalAlignment:
-                          TableCellVerticalAlignment.middle,
-                      children: [
-                        TableRow(children: [
-                          const Icon(Icons.email, size:18),
-                          Text(widget.user.email.toString(), style:const TextStyle(fontSize:12, fontWeight: FontWeight.bold)),
-                        ]),
-                      TableRow(children: [
-                          const Icon(Icons.phone, size:18),
-                          Text(widget.user.phone.toString(), style:const TextStyle(fontSize:12, fontWeight: FontWeight.bold)),
-                        ]),
-                
-                      ],
-                    ),
-                  ],
-                ))
-              ]),
-          ),*/
           Container(
             //color: Color.fromARGB(255, 255, 250, 202),
             padding: const EdgeInsets.all(8),
@@ -442,8 +387,6 @@ class _ProfileTabScreenState extends State<ProfileTabScreen> {
             fontSize: 16.0);
         val = random.nextInt(1000);
         setState(() {});
-        // DefaultCacheManager manager = DefaultCacheManager();
-        // manager.emptyCache(); //clears all data in cache.
       } else {
         Fluttertoast.showToast(
             msg: "Failed",
@@ -510,14 +453,7 @@ class _ProfileTabScreenState extends State<ProfileTabScreen> {
                       data['status'] == 'success') {
                         ScaffoldMessenger.of(context)
                           .showSnackBar(const SnackBar(content: Text("Name Updated Successfully")));
-                      
-                    /*Fluttertoast.showToast(
-                        msg: "Success",
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.BOTTOM,
-                        timeInSecForIosWeb: 1,
-                        textColor: Colors.green,
-                        fontSize: 14.0);*/
+
                     setState(() {
                       widget.user.name = nameEditingController.text;
                     });
@@ -526,13 +462,6 @@ class _ProfileTabScreenState extends State<ProfileTabScreen> {
                     ScaffoldMessenger.of(context)
                           .showSnackBar(const SnackBar(content: Text("Name Updated Unsuccessfully")));
                       return;
-                    /*Fluttertoast.showToast(
-                        msg: "Failed",
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.BOTTOM,
-                        timeInSecForIosWeb: 1,
-                        textColor: Colors.red,
-                        fontSize: 14.0);*/
                   }
                 });
               },
@@ -620,128 +549,6 @@ class _ProfileTabScreenState extends State<ProfileTabScreen> {
       },
     );
   }
-  
-  /*void _updatePasswordDialog() {
-    TextEditingController pass1EditingController = TextEditingController();
-    TextEditingController pass2EditingController = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10.0))),
-          title: const Text(
-            "Update Password",
-            style: TextStyle(),
-          ),
-          contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
-          content: SingleChildScrollView(
-            //height: screenHeight / 4,
-            child: Column(
-              children: [
-                TextField(
-                    controller: pass1EditingController,
-                    keyboardType: TextInputType.text,
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                        labelText: 'New password',
-                        labelStyle: TextStyle(),
-                        icon: Icon(
-                          Icons.lock,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(width: 2.0),
-                        ))),
-                        const SizedBox(height: 16),
-                TextField(
-                    controller: pass2EditingController,
-                    keyboardType: TextInputType.text,
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                        labelText: 'Confirm password',
-                        labelStyle: TextStyle(),
-                        icon: Icon(
-                          Icons.lock,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(width: 2.0),
-                        ))),
-                const SizedBox(height: 16),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text(
-                "Confirm",
-                style: TextStyle(),
-              ),
-              onPressed: () {
-                if (pass1EditingController.text !=
-                    pass2EditingController.text) {
-                  Fluttertoast.showToast(
-                      msg: "Passwords are not the same",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM,
-                      timeInSecForIosWeb: 1,
-                      textColor: Colors.red,
-                      fontSize: 14.0);
-                  return;
-                }
-                if (pass1EditingController.text.isEmpty ||
-                    pass2EditingController.text.isEmpty) {
-                  Fluttertoast.showToast(
-                      msg: "Fill in passwords",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM,
-                      timeInSecForIosWeb: 1,
-                      textColor: Colors.red,
-                      fontSize: 14.0);
-                  return;
-                }
-                Navigator.of(context).pop();
-                http.post(Uri.parse("${MyConfig().SERVER}barterit_application/php/update_profile.php"),
-                    body: {
-                      "password": pass1EditingController.text,
-                      "userid": widget.user.id
-                    }).then((response) {
-                  var data = jsonDecode(response.body);
-                  //  print(data);
-                  if (response.statusCode == 200 &&
-                      data['status'] == 'success') {
-                    Fluttertoast.showToast(
-                        msg: "Success",
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.BOTTOM,
-                        timeInSecForIosWeb: 1,
-                        textColor: Colors.green,
-                        fontSize: 14.0);
-                  } else {
-                    Fluttertoast.showToast(
-                        msg: "Failed",
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.BOTTOM,
-                        timeInSecForIosWeb: 1,
-                        textColor: Colors.red,
-                        fontSize: 14.0);
-                  }
-                });
-              },
-            ),
-            TextButton(
-              child: const Text(
-                "Cancel",
-                style: TextStyle(),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }*/
 
     void _updatePasswordDialog() {
       TextEditingController passEditingController = TextEditingController();
@@ -886,12 +693,8 @@ class _ProfileTabScreenState extends State<ProfileTabScreen> {
             ),
           );
         },
-      );
-    
-  
+      ); 
 }
-
-
 
   void onLogout() {
     showDialog(

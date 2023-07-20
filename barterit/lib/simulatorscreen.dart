@@ -160,10 +160,6 @@ class _SimulatorScreenState extends State<SimulatorScreen> {
       var jsondata = jsonDecode(response.body);
       if (jsondata['status'] == 'success') {
         print(response.statusCode);
-        //ScaffoldMessenger.of(context)
-            //.showSnackBar(const SnackBar(content: Text("Payment Success")));
-        //Navigator.pop(context);
-        //Navigator.pop(context);
 
       } else {
         ScaffoldMessenger.of(context)

@@ -60,7 +60,6 @@ class _BillScreenState extends State<BillScreen> {
                                       thickness: 2.0,
                                     ),
                                   ),
-            //const SizedBox(height: 5),
             Container(
               width: double.infinity,
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
@@ -245,9 +244,7 @@ class _BillScreenState extends State<BillScreen> {
                                         user: widget.user,
                                         totalprice:widget.totalprice,
                                       )));
-                                      //Navigator.pop(context);
-                //makePayment();
-                //registerUser();
+                                      
               },
             ),
             TextButton(
@@ -264,35 +261,4 @@ class _BillScreenState extends State<BillScreen> {
       },
     );
   }
-  /*void makePayment() {
-    //String itemname = _itemnameEditingController.text;
-    
-
-    http.post(Uri.parse("${MyConfig().SERVER}/barterit_application/php/payment_update.php"),
-        body: {
-          "userid": widget.user.id.toString(),
-          "phone": widget.user.phone.toString(),
-          "amount": widget.totalprice.toStringAsFixed(2),
-          "email": widget.user.email.toString(),
-          "name": widget.user.name.toString(),
-
-        }).then((response) {
-      print(response.body);
-      if (response.statusCode == 200) {
-        var jsondata = jsonDecode(response.body);
-        if (jsondata['status'] == 'success') {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text("Payment Success")));
-        } else {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text("Payment Failed")));
-        }
-        Navigator.pop(context);
-      } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text("Payment Failed")));
-        Navigator.pop(context);
-      }
-    });
-  }*/
 }

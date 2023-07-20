@@ -71,12 +71,6 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
             color: Colors.red,
           ),
         ),
-        /*IconButton(
-          onPressed: () {
-            // Handle messenger action
-          },
-          icon: const Icon(Icons.chat, color: Colors.black,),
-        ), */
         TextButton.icon(
             onPressed: () async {
               if (cartqty > 0) {
@@ -271,19 +265,6 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                     ),
                   )
                 ]),
-                /*TableRow(children: [
-                  const TableCell(
-                    child: Text(
-                      "Item Condition",
-                      style: TextStyle(fontWeight: FontWeight.w900),
-                    ),
-                  ),
-                  TableCell(
-                    child: Text(
-                      widget.useritem.itemCondition.toString(),
-                    ),
-                  )
-                ]),*/
                 TableRow(children: [
                   const TableCell(
                     child: Text(
@@ -306,19 +287,6 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
           padding: const EdgeInsets.all(6),
           child:
               Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-            /*IconButton(
-                onPressed: () {
-                  if (userqty <= 1) {
-                    userqty = 1;
-                    totalprice = singleprice * userqty;
-                  } else {
-                    userqty = userqty - 1;
-                    totalprice = singleprice * userqty;
-                  }
-                  setState(() {});
-                },
-                icon: const Icon(Icons.remove)
-            ),*/
             Container(
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey),
@@ -345,18 +313,6 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
               userqty.toString(),
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            /*IconButton(
-                onPressed: () {
-                  if (userqty >= qty) {
-                    userqty = qty;
-                    totalprice = singleprice * userqty;
-                  } else {
-                    userqty = userqty + 1;
-                    totalprice = singleprice * userqty;
-                  }
-                  setState(() {});
-                },
-                icon: const Icon(Icons.add)),*/
             Container(
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey),

@@ -58,7 +58,6 @@ class _BuyerCartScreenState extends State<BuyerCartScreen> {
                                 fit: BoxFit.cover,
                                 imageUrl:
                                     "${MyConfig().SERVER}/barterit_application/assets/items/${cartList[index].itemId}_1.png",
-                                    //"${MyConfig().SERVER}/barterit_application/assets/items/${widget.useritem.itemId}_1.png",
                                 placeholder: (context, url) =>
                                     const LinearProgressIndicator(),
                                 errorWidget: (context, url, error) =>
@@ -90,8 +89,6 @@ class _BuyerCartScreenState extends State<BuyerCartScreen> {
                                                       .showSnackBar(const SnackBar(
                                                           content: Text(
                                                               "Quantity cannot less than 1")));
-                                                  //userqty = 1;
-                                                  //totalprice = singleprice * userqty;
                                                 } else {
                                                   int newqty = int.parse(
                                                           cartList[index]
@@ -107,8 +104,6 @@ class _BuyerCartScreenState extends State<BuyerCartScreen> {
                                                           newqty;
                                                   updateCart(
                                                       index, newqty, newprice);
-                                                  //userqty = userqty - 1;
-                                                  //totalprice = singleprice * userqty;
                                                 }
                                                 setState(() {});
                                               },
@@ -214,8 +209,6 @@ class _BuyerCartScreenState extends State<BuyerCartScreen> {
           var extractdata = jsondata['data'];
           extractdata['carts'].forEach((v) {
             cartList.add(Cart.fromJson(v));
-            // totalprice = totalprice +
-            //     double.parse(extractdata["carts"]["cart_price"].toString());
           });
           totalprice = 0.0;
 

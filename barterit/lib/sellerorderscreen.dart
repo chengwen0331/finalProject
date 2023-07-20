@@ -55,61 +55,7 @@ class _SellerOrderScreenState extends State<SellerOrderScreen> {
             )
             : Column(
                 children: [
-                  /*SizedBox(
-                    width: screenWidth,
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
-                      child: Row(
-                        children: [
-                          Flexible(
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Card(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Container(
-                                            margin: const EdgeInsets.all(4),
-                                            width: screenWidth * 0.25,
-                                            child: CachedNetworkImage(
-                                              imageUrl: "${MyConfig().SERVER}/barterit_application/assets/profile/${widget.user.id}.png?v=$val",
-                                              placeholder: (context, url) => const LinearProgressIndicator(),
-                                              errorWidget: (context, url, error) => Image.network(
-                                                "${MyConfig().SERVER}/barterit_application/assets/profile/0.png",
-                                                scale: 2,
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 10),
-                                          Text(
-                                            "Order by: ${widget.user.name}",
-                                            style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          Text(
-                                            "Phone Number: ${widget.user.phone}",
-                                            style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),*/
+                  
                   const SizedBox(height:10),
                   //const Text("Your Current Order"),
                   Expanded(
@@ -217,10 +163,6 @@ class _SellerOrderScreenState extends State<SellerOrderScreen> {
     
   }
 
-  //  Text(orderList[index].orderBill.toString()),
-  //                               Text(orderList[index].orderStatus.toString()),
-  //                               Text(orderList[index].orderPaid.toString()),
-
   void loadsellerorders() {
     http.post(
         Uri.parse("${MyConfig().SERVER}/barterit_application/php/load_sellerorder.php"),
@@ -240,8 +182,7 @@ class _SellerOrderScreenState extends State<SellerOrderScreen> {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       content: Text("No order found")));
                   return;
-          // status = "Please register an account first";
-          // setState(() {});
+
         }
         setState(() {});
       }

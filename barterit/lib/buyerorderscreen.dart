@@ -134,8 +134,6 @@ class _BuyerOrderScreenState extends State<BuyerOrderScreen> {
                                             )));
                                 loadorders();
                               },
-                              /*leading: CircleAvatar(
-                                  child: Text((index + 1).toString())),*/
                               leading: Container(
                                 width: 40,
                                 height: 40,
@@ -216,10 +214,6 @@ class _BuyerOrderScreenState extends State<BuyerOrderScreen> {
       ),
     );
   }
-
-  //  Text(orderList[index].orderBill.toString()),
-  //                               Text(orderList[index].orderStatus.toString()),
-  //                               Text(orderList[index].orderPaid.toString()),
 
   void loadorders() {
     http.post(

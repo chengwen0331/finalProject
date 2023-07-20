@@ -78,10 +78,6 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
             ),
             const SizedBox(height: 10),
             Container(
-              /*decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(8),
-              ),*/
               child:Padding(
                 padding: const EdgeInsets.all(8.0),
               child: Table(

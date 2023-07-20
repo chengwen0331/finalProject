@@ -97,29 +97,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
             onPressed: showCategory,
             icon: const Icon(Icons.filter_list),
           ),
-          /*TextButton.icon(
-            icon: const Icon(
-              Icons.shopping_cart,
-              color: Colors.black,
-            ),
-
-            // Your icon here
-            label: Text(cartqty.toString()), // Your text here
-            onPressed: () async {
-              if (cartqty > 0) {
-                await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (content) => BuyerCartScreen(
-                              user: widget.user,
-                            )));
-                _loadExploreItems(1);
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("No item in cart")));
-              }
-            },
-          ),*/
           TextButton.icon(
             onPressed: () async {
               if (cartqty > 0) {
@@ -370,25 +347,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
   }
   
   void _loadExploreItems(int pg) {
-    /*if (widget.user.id == "na") {
-      setState(() {
-
-      });
-      return;
-    }*/
-
-    /*showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return const AlertDialog(
-          title: Text("Please Wait"),
-          content: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
-                  ),
-          //content: Text("Registration..."),
-        );
-      },
-    );*/
 
     http.post(Uri.parse("${MyConfig().SERVER}/barterit_application/php/load_items.php"),
         body: {

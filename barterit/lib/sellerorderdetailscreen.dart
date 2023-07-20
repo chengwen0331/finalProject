@@ -28,7 +28,6 @@ class _SellerOrderDetailsScreenState extends State<SellerOrderDetailsScreen> {
   late double screenHeight, screenWidth;
   String selectStatus = "New";
   var val = 50;
-  // ignore: prefer_typing_uninitialized_variables
   late Position _currentPosition;
   var pickupLatLng;
   String curaddress = "";
@@ -57,13 +56,6 @@ class _SellerOrderDetailsScreenState extends State<SellerOrderDetailsScreen> {
     loadbuyer();
     loadorderdetails();
     selectStatus = widget.order.orderStatus.toString();
-    /*if (widget.order.orderLat.toString() == "") {
-      picuploc = "Not selected";
-    } else {
-      picuploc = "Selected";
-      pickupLatLng = LatLng(double.parse(widget.order.orderLat.toString()),
-          double.parse(widget.order.orderLng.toString()));
-    }*/
   }
 
   @override
@@ -153,19 +145,6 @@ class _SellerOrderDetailsScreenState extends State<SellerOrderDetailsScreen> {
             ],
           )),
         ),
-        /*Container(
-            padding: const EdgeInsets.all(8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                ElevatedButton(
-                    onPressed: () {
-                      pickupDialog();
-                    },
-                    child: const Text("Select Pickup Location")),
-                Text(picuploc)
-              ],
-            )),*/
         orderdetailsList.isEmpty
             ? Container()
             : Expanded(
@@ -307,8 +286,7 @@ class _SellerOrderDetailsScreenState extends State<SellerOrderDetailsScreen> {
             orderdetailsList.add(OrderDetails.fromJson(v));
           });
         } else {
-          // status = "Please register an account first";
-          // setState(() {});
+
         }
         setState(() {});
       }

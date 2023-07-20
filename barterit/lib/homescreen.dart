@@ -52,6 +52,24 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
+        body: Center(
+          child: RichText(
+                  text: TextSpan(
+                    style: DefaultTextStyle.of(context).style,
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: 'Welcome\n',
+                        style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+),
+
+
       ),
     );
   }

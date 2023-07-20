@@ -65,7 +65,7 @@ class _ItemListingScreenState extends State<ItemListingScreen> {
           actions: [
             PopupMenuButton(
                 // add icon, by default "3 dot" icon
-                icon: const Icon(Icons.filter_list),
+                icon: const Icon(Icons.more_vert),
                 itemBuilder: (context) {
               return [
                 const PopupMenuItem<int>(

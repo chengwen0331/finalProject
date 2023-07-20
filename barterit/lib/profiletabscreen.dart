@@ -816,7 +816,7 @@ class _ProfileTabScreenState extends State<ProfileTabScreen> {
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(width: 2.0),
                   ),
-
+                
                 ),
               ),
             ],

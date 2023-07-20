@@ -3,7 +3,9 @@ import 'dart:convert';
 
 import 'package:barterit/explorescreen.dart';
 import 'package:barterit/model/myconfig.dart';
+import 'package:barterit/model/order.dart';
 import 'package:barterit/model/user.dart';
+import 'package:barterit/paymentsuccessscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -21,6 +23,7 @@ class SimulatorScreen extends StatefulWidget {
 class _SimulatorScreenState extends State<SimulatorScreen> {
   late String paidstatus = "Success";
   late double screenHeight, screenWidth, cardwitdh;
+  late Order order;
   @override
   void initState() {
     super.initState();
@@ -82,6 +85,14 @@ class _SimulatorScreenState extends State<SimulatorScreen> {
                         child: ElevatedButton(
                           onPressed: () {
                             updatePayment(paidstatus);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (content) => PaymentSuccessScreen(
+                                        user: widget.user,
+                                        totalprice:widget.totalprice,
+                                      )));
+                                      
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color.fromARGB(255, 234, 92, 82),
@@ -149,10 +160,10 @@ class _SimulatorScreenState extends State<SimulatorScreen> {
       var jsondata = jsonDecode(response.body);
       if (jsondata['status'] == 'success') {
         print(response.statusCode);
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text("Payment Success")));
-        Navigator.pop(context);
-        Navigator.pop(context);
+        //ScaffoldMessenger.of(context)
+            //.showSnackBar(const SnackBar(content: Text("Payment Success")));
+        //Navigator.pop(context);
+        //Navigator.pop(context);
 
       } else {
         ScaffoldMessenger.of(context)

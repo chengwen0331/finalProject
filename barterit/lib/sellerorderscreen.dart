@@ -34,7 +34,7 @@ class _SellerOrderScreenState extends State<SellerOrderScreen> {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(title: const Text("Your Order/s"),
+      appBar: AppBar(title: const Text("Order/s"),
       backgroundColor: Colors.amber,
       actions: [
           IconButton(
@@ -55,7 +55,7 @@ class _SellerOrderScreenState extends State<SellerOrderScreen> {
             )
             : Column(
                 children: [
-                  SizedBox(
+                  /*SizedBox(
                     width: screenWidth,
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
@@ -109,8 +109,8 @@ class _SellerOrderScreenState extends State<SellerOrderScreen> {
                         ],
                       ),
                     ),
-                  ),
-
+                  ),*/
+                  const SizedBox(height:10),
                   //const Text("Your Current Order"),
                   Expanded(
                       child: ListView.builder(
@@ -178,18 +178,18 @@ class _SellerOrderScreenState extends State<SellerOrderScreen> {
                                         Text(
                                             "Order ID: ${orderList[index].orderId}",
                                             style: const TextStyle(
-                                              fontSize: 14,
+                                              fontSize: 13,
                                               fontWeight: FontWeight.bold),),
                                         Text(
                                           "Total Payment: RM ${double.parse(orderList[index].orderPaid.toString()).toStringAsFixed(2)}",
                                           style: const TextStyle(
-                                              fontSize: 14,
+                                              fontSize: 13,
                                               fontWeight: FontWeight.bold),
                                               ),
                                         Text(
                                           "Order Date: $datePart",
                                           style: const TextStyle(
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
@@ -197,7 +197,7 @@ class _SellerOrderScreenState extends State<SellerOrderScreen> {
                                         Text(
                                             "Order Status: ${orderList[index].orderStatus}",
                                             style: const TextStyle(
-                                              fontSize: 14,
+                                              fontSize: 13,
                                               fontWeight: FontWeight.bold),)
                                       ]),
                                   Column(

@@ -20,7 +20,7 @@ class ExploreScreen extends StatefulWidget {
 
 class _ExploreScreenState extends State<ExploreScreen> {
   late List<Widget> tabchildren;
-  String maintitle = "Buyer";
+  String maintitle = "Barter";
   bool isSearchBarVisible = false;
   late double screenHeight, screenWidth;
   late int axiscount = 2;

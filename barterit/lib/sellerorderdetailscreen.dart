@@ -70,12 +70,22 @@ class _SellerOrderDetailsScreenState extends State<SellerOrderDetailsScreen> {
   Widget build(BuildContext context) {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
+    String? orderDate = widget.order.orderDate;
+                            String datePart = orderDate?.substring(0, 10) ?? 'Unknown';
     return Scaffold(
       appBar: AppBar(title: const Text("Order Details"),
-      backgroundColor: Colors.amber,),
+      backgroundColor: Colors.amber,
+      actions: [
+        IconButton(
+          onPressed: () {
+            // Handle messenger action
+          },
+          icon: const Icon(Icons.chat, color: Colors.black,),
+        ), 
+        ]),
       body: Column(children: [
         Flexible(
-          flex: 4,
+          flex: 5,
           //height: screenHeight / 5.5,
           child: Card(
               child: Row(
@@ -121,6 +131,12 @@ class _SellerOrderDetailsScreenState extends State<SellerOrderDetailsScreen> {
                                   )),
                               Text(
                                 "Total Paid: RM ${double.parse(widget.order.orderPaid.toString()).toStringAsFixed(2)}",
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                ),
+                              ),
+                              Text(
+                                "Order Date: $datePart",
                                 style: const TextStyle(
                                   fontSize: 14,
                                 ),

@@ -1,4 +1,4 @@
 class MyConfig {
-  //String SERVER = "http://10.117.129.20/";
-  String SERVER = "http://wzyjoker.com/";
+  String SERVER = "http://192.168.0.11/";
+  //String SERVER = "http://wzyjoker.com/";
 }

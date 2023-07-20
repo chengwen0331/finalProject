@@ -56,15 +56,16 @@ late Position _currentPosition;
       otp: "na");
   var pickupLatLng;
   String picuploc = "Not selected";
-  var _pickupPosition;
 
   @override
   void initState() {
     super.initState();
     loadbuyer();
     loadorderdetails();
-    //_determinePosition();
+    _determinePosition();
     selectStatus = widget.order.orderStatus.toString();
+    prlat = widget.order.orderLat.toString();
+    prlong = widget.order.orderLng.toString();
     /*if (widget.order.orderLat.toString() == "") {
       picuploc = "Not selected";
       _pickupPosition = const CameraPosition(
@@ -106,6 +107,12 @@ late Position _currentPosition;
             color: Colors.black,
                   size: 25,),
           ),
+          IconButton(
+          onPressed: () {
+            // Handle messenger action
+          },
+          icon: const Icon(Icons.chat, color: Colors.black,),
+        ), 
       ]
       ),
       body: Column(children: [
@@ -197,10 +204,11 @@ late Position _currentPosition;
                                           ),
                                           TableCell(
                                             child: Text(
-                                              (widget.order.orderLat?.isEmpty == true || widget.order.orderLng?.isEmpty == true)
-                                                  ? "Not selected"
-                                                  : "${widget.order.orderLocality}, ${widget.order.orderState}\n(${widget.order.orderLat}/\n${widget.order.orderLng})",
-                                              style: const TextStyle(fontSize: 15),
+                                              (widget.order.orderLat?.isEmpty == false || widget.order.orderLng?.isEmpty == false)
+                                                  //? "Not selected"
+                                                  ? "${widget.order.orderLocality}, ${widget.order.orderState}\n(${widget.order.orderLat}/\n${widget.order.orderLng})"
+                                              
+                                              : picuploc
                                             ),
                                           ),
                                         ],
@@ -454,8 +462,8 @@ late Position _currentPosition;
       if (response.statusCode == 200) {
         var jsondata = jsonDecode(response.body);
         if (jsondata['status'] == 'success') {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text("Update Success")));
+          //ScaffoldMessenger.of(context)
+              //.showSnackBar(const SnackBar(content: Text("Update Success")));
         } else {
           ScaffoldMessenger.of(context)
               .showSnackBar(const SnackBar(content: Text("Update Failed")));
@@ -515,4 +523,6 @@ late Position _currentPosition;
                 updateAddress();
     });
   }
+
+  
 }

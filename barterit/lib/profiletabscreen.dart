@@ -27,7 +27,6 @@ class _ProfileTabScreenState extends State<ProfileTabScreen> {
   late List<Widget> tabchildren;
   String maintitle = "Profile";
   late double screenHeight, screenWidth;
-  bool _isObscured = true;
   File? _image;
   Random random = Random();
   var val = 50;
@@ -35,7 +34,6 @@ class _ProfileTabScreenState extends State<ProfileTabScreen> {
 
   @override
     void initState() {
-      _isObscured = true;
       super.initState();
       print("Profile");
     }
@@ -746,6 +744,7 @@ class _ProfileTabScreenState extends State<ProfileTabScreen> {
   }*/
 
     void _updatePasswordDialog() {
+      TextEditingController passEditingController = TextEditingController();
   TextEditingController pass1EditingController = TextEditingController();
   TextEditingController pass2EditingController = TextEditingController();
   bool _isObscured = true;
@@ -773,28 +772,34 @@ class _ProfileTabScreenState extends State<ProfileTabScreen> {
           child: Column(
             children: [
               TextField(
-                controller: pass1EditingController,
+                controller: passEditingController,
                 keyboardType: TextInputType.text,
-                //obscureText: true,
-                obscureText: _isObscured,
+                obscureText: true,
+                //obscureText: _isObscured,
                 style: const TextStyle(),
-                decoration: InputDecoration(
-                  labelText: 'New password',
-                  labelStyle: const TextStyle(),
-                  focusedBorder: const OutlineInputBorder(
+                decoration: const InputDecoration(
+                  labelText: 'Old password',
+                  labelStyle: TextStyle(),
+                  focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(width: 2.0),
                   ),
-                  suffixIcon: IconButton(
-                            padding: const EdgeInsetsDirectional.only(end:12.0),
-                            icon: _isObscured 
-                            ? const Icon(Icons.visibility) 
-                            : const Icon(Icons.visibility_off),
-                            onPressed:(){
-                              setState((){
-                                _isObscured =! _isObscured;
-                              });
-                            }
-                          ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: pass1EditingController,
+                keyboardType: TextInputType.text,
+                //textInputAction: TextInputAction.next,
+                obscureText: true,
+                //obscureText: !_isObscured,
+                style: const TextStyle(),
+                decoration: const InputDecoration(
+                  labelText: 'New password',
+                  labelStyle: TextStyle(),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(width: 2.0),
+                  ),
+
                 ),
               ),
               const SizedBox(height: 16),
@@ -802,29 +807,18 @@ class _ProfileTabScreenState extends State<ProfileTabScreen> {
                 controller: pass2EditingController,
                 keyboardType: TextInputType.text,
                 //textInputAction: TextInputAction.next,
-                //obscureText: true,
-                obscureText: !_isObscured,
+                obscureText: true,
+                //obscureText: !_isObscured,
                 style: const TextStyle(),
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Confirm password',
-                  labelStyle: const TextStyle(),
-                  focusedBorder: const OutlineInputBorder(
+                  labelStyle: TextStyle(),
+                  focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(width: 2.0),
                   ),
-                  suffixIcon: IconButton(
-                            padding: const EdgeInsetsDirectional.only(end:12.0),
-                            icon: _isObscured 
-                            ? const Icon(Icons.visibility) 
-                            : const Icon(Icons.visibility_off),
-                            onPressed:(){
-                              setState((){
-                                _isObscured =! _isObscured;
-                              });
-                            }
-                          ),
+
                 ),
               ),
-              const SizedBox(height: 16),
             ],
           ),
         ),
@@ -860,6 +854,7 @@ class _ProfileTabScreenState extends State<ProfileTabScreen> {
                 Navigator.of(context).pop();
                 http.post(Uri.parse("${MyConfig().SERVER}barterit_application/php/update_profile.php"),
                     body: {
+                      "oldpass": passEditingController.text,
                       "password": pass1EditingController.text,
                       "userid": widget.user.id
                     }).then((response) {

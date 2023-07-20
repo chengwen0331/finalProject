@@ -60,16 +60,15 @@ class _SimulatorScreenState extends State<SimulatorScreen> {
               child: Card(
                 child: Padding(
                   padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Total Payment: RM${widget.totalprice.toStringAsFixed(2)}",
-                        style: const TextStyle(
-                          fontSize: 16,
-                        ),
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      "Total Payment: RM${widget.totalprice.toStringAsFixed(2)}",
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
@@ -85,7 +84,7 @@ class _SimulatorScreenState extends State<SimulatorScreen> {
                             updatePayment(paidstatus);
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.amber,
+                            backgroundColor: Color.fromARGB(255, 234, 92, 82),
                           ),
                           child: const Align(
                             alignment: Alignment.center,
@@ -111,7 +110,7 @@ class _SimulatorScreenState extends State<SimulatorScreen> {
                             updatePayment(paidstatus);
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.amber,
+                            backgroundColor: Color.fromARGB(255, 30, 114, 72),
                           ),
                           child: const Align(
                             alignment: Alignment.center,
